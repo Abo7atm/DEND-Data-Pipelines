@@ -12,6 +12,7 @@ class LoadDimensionOperator(BaseOperator):
                  insert_query=None,
                  redshift_conn_id=None,
                  table_name=None,
+                 trunc=False,
                  *args, **kwargs):
 
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
@@ -22,7 +23,9 @@ class LoadDimensionOperator(BaseOperator):
 
 
     def execute(self, context):
-        # self.log.info('LoadDimensionOperator not implemented yet')
+        if trunc:
+            redshift.run(f"TRUNCATE {self.table_name};")
+
         redshift = PostgresHook(self.redshift_conn_id)
         redshift.run("""
                     INSERT INTO {}
